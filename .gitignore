@@ -36,11 +36,15 @@ credentials
 # Locally installed dependencies used to build Lambda Layer
 lambda-layer/
 
+# Lambda deployment build directories
+build/
+
 # Generated Lambda Layer ZIP
 cloudops-ai-boto3-layer.zip
 
 # Backup created before RAG integration
 backend/lambda/lambda_handler.py.pre-rag
+backend/lambda/lambda_handler.py.pre-agent
 
 # Other generated Lambda ZIP packages
 *.zip

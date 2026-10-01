@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 
+from agent.tool_agent import run_agent_with_messages
 
 # ============================================================
 # 1. Configuration
@@ -361,31 +362,60 @@ User question:
                 ]
             }
         )
-
         # ====================================================
-        # 12. Invoke Nova Micro
+        # 12. Invoke Nova Tool-Use Agent
         # ====================================================
 
-        print("Invoking Nova Micro")
-
-        response = bedrock.converse(
-            modelId=MODEL_ID,
-            messages=messages
+        print(
+            "Invoking Nova CloudOps agent"
         )
 
-        # ====================================================
-        # 13. Extract AI Answer
-        # ====================================================
-
-        answer = (
-            response["output"]
-            ["message"]
-            ["content"][0]
-            ["text"]
+        agent_result = run_agent_with_messages(
+           messages
         )
 
-        print("AI response generated successfully")
+        if not agent_result.get("success"):
 
+           print(
+               "Agent execution failed:",
+                agent_result
+           )
+
+           return {
+               "statusCode": 500,
+               "headers": {
+                   "Content-Type": "application/json"
+              },
+              "body": json.dumps({
+                  "error": "Unable to generate AI response"
+              })
+        }
+
+        # ====================================================
+        # 13. Extract Agent Answer
+        # ====================================================
+
+        answer = agent_result.get(
+           "answer",
+           ""
+        )
+
+        tool_used = agent_result.get(
+           "tool_used"
+        )
+
+        tool_result = agent_result.get(
+           "tool_result"
+        )
+
+        print(
+            "AI response generated successfully"
+        )
+
+        print(
+           "AWS tool used:",
+           tool_used
+        )
         # ====================================================
         # 14. Generate Timestamp
         # ====================================================
@@ -404,10 +434,14 @@ User question:
                 "timestamp": timestamp,
                 "question": message,
                 "answer": answer,
-                "model_id": MODEL_ID
+                "model_id": MODEL_ID,
+                "tool_used": (
+                    tool_used
+                    if tool_used
+                    else "none"
+                )
             }
-        )
-
+                      )
         print("Conversation stored successfully")
 
         # ====================================================
@@ -422,7 +456,9 @@ User question:
             "body": json.dumps({
                 "session_id": session_id,
                 "answer": answer,
-                "sources": sources
+                "sources": sources,
+                "tool_used": tool_used,
+                "tool_result": tool_result
             })
         }
 
