@@ -1,4 +1,8 @@
-# Python virtual environment
+# ============================================================
+# Python
+# ============================================================
+
+# Python virtual environments
 .venv/
 venv/
 
@@ -7,36 +11,93 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+# ============================================================
 # Environment variables / secrets
+# ============================================================
+
 .env
 .env.*
 !.env.example
 
+
+# ============================================================
 # AWS / credentials
+# ============================================================
+
 .aws/
 credentials
 
+
+# ============================================================
+# AWS Lambda build artifacts
+# ============================================================
+
+# Locally installed dependencies used to build Lambda Layer
+lambda-layer/
+
+# Lambda deployment build directories
+build/
+
+# Generated Lambda Layer ZIP
+cloudops-ai-boto3-layer.zip
+
+# Backup created before RAG integration
+backend/lambda/lambda_handler.py.pre-rag
+backend/lambda/lambda_handler.py.pre-agent
+
+# Other generated Lambda ZIP packages
+*.zip
+
+
+# ============================================================
 # macOS
+# ============================================================
+
 .DS_Store
 
-# IDE
+
+# ============================================================
+# IDE / Editor
+# ============================================================
+
 .vscode/
 .idea/
 
+*.swp
+*.swo
+*~
+
+
+# ============================================================
 # Testing / coverage
+# ============================================================
+
 .pytest_cache/
 .coverage
 htmlcov/
 
+
+# ============================================================
 # Logs
+# ============================================================
+
 *.log
 logs/
 
-# Terraform local/state files
+
+# ============================================================
+# Terraform
+# ============================================================
+
+# Terraform local working directory
 .terraform/
+
+# Terraform state files
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
+
+# Terraform crash logs
 crash.log
 crash.*.log
 
@@ -44,6 +105,19 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# Local Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# IMPORTANT:
+# .terraform.lock.hcl is intentionally NOT ignored.
+# We will commit the provider lock file when we build Terraform.
+
+
+# ============================================================
 # Local temporary files
+# ============================================================
+
 *.tmp
-*.swp
